@@ -1,31 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-       		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
-       		http://www.springframework.org/schema/mvc 
-       		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd 
-       		http://www.springframework.org/schema/context 
-       		http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
        
-	<!-- context scan default package configuration -->
-	<context:component-scan base-package="com.xaxis.bbs"/>
-	<context:annotation-config/>
-	<mvc:annotation-driven />
-	
-	<!-- html / jsp view Resolver -->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/jsp/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
-	
-	<!-- resources exclusions from servlet mapping -->
-    <mvc:resources mapping="/css/**" location="/css/"/>
-    <mvc:resources mapping="/images/**" location="/images/"/>
-    <mvc:resources mapping="/js/**" location="/js/"/>
-    <!-- ExtJS 라이브러리 폴더 및 MVC 리소스 폴더 등록 -->
-    <mvc:resources mapping="/extjs/**" location="/extjs/"/>
-    <mvc:resources mapping="/app/**" location="/app/"/>
-</beans>	
+ 	<import resource="classpath:applicationContext-Databases.xml"/>
+</beans>
