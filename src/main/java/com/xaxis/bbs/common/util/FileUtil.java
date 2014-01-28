@@ -14,14 +14,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+@Service
 public class FileUtil {
 	
-	private static Boolean appDebugMode = true;
-	
+	/*
+	 * Log4j 로그 객체
+	 */
 	private Logger log = Logger.getLogger(this.getClass());
 	
+	/*
+	 *  Debug 모드 설정
+	 */
+	private static Boolean appDebugMode = true;
+	
+	/**
+	 * UploadFile
+	 * 파일 업로드 프로세스
+	 * @param uploadFileObject => MultipartFile 파일 객체
+	 * @param absoluteSavePath => 실제 저장될 물리 경로를 포함한 문자열
+	 * @return
+	 */
 	public Map<String, Object> uploadFile(MultipartFile uploadFileObject, String absoluteSavePath )
 	{
 		
@@ -67,17 +82,27 @@ public class FileUtil {
 				uploadFileObject.transferTo(saveFile);
 				
 				// 에러가 없을 경우 해당 파일 저장의 성공 여부를 Obj에 기록 하여 전달
-				saveFileResultObj.put("Flag", true);
+				saveFileResultObj.put("Flag", true);	// 성공
 				
 			}
 			
 		}catch(IOException ie){
 			ie.printStackTrace();
-			saveFileResultObj.put("Flag", false);
+			saveFileResultObj.put("Flag", false);	// 실패
 		}
 		return saveFileResultObj;
 	}
 	
+	/**
+	 * download
+	 * 파일 다운로드 프로세스
+	 * @param request => HttpServletRequest 객체
+	 * @param response	=> HttpServletResponse 객체
+	 * @param absoluteFilePath => 실제 다운로드될 파일의 물리 경로를 포함한 문자열
+	 * @param mimeType => 다운로드될 파일의 Mime 타입
+	 * @param fileSize => 다운로드될 파일의 byte 수
+	 * @throws IOException
+	 */
 	public void download(HttpServletRequest request, HttpServletResponse response, String absoluteFilePath, String mimeType, long fileSize) throws IOException
 	{
 		File downloadFile = new File(absoluteFilePath);
@@ -89,10 +114,11 @@ public class FileUtil {
 		// 문자 인코딩
 		final String CHARSET = "euc-kr";
 		
-		
-		log.debug("Exits => "+ downloadFile.exists());
-		log.debug("Length => "+ downloadFile.length());
-		log.debug("is Dir => "+ downloadFile.isDirectory());
+		if( appDebugMode ){
+			log.debug("Exits => "+ downloadFile.exists());
+			log.debug("Length => "+ downloadFile.length());
+			log.debug("is Dir => "+ downloadFile.isDirectory());
+		}
 		
 		
 		// 실제 파일 존재 여부 확인.
@@ -128,33 +154,25 @@ public class FileUtil {
 	      response.setHeader("Content-Length", "" + fileSize);
 	    }
 	    
+	    // 다운로드 파일의 InputStream 객체 생성
 	    InputStream is = new FileInputStream(downloadFile);
 	    BufferedInputStream fin = null;
 	    BufferedOutputStream outs = null;
-	    
+ 
 	    try {
-	        fin = new BufferedInputStream(is);
-	        outs = new BufferedOutputStream(response.getOutputStream());
-	        int read = 0;
-	   
-	        while ((read = fin.read(buffer)) != -1) {
-	          outs.write(buffer, 0, read);
-	        }
-	      } catch (IOException ex) {
-	          ex.printStackTrace();
-	      } finally {
-	        try {
-	          outs.close();
-	        } catch (Exception ex1) {
-	        }
-	   
-	        try {
-	          fin.close();
-	        } catch (Exception ex2) {
-	   
-	        }
-	      } // end of try/catch
-		
-		
+	    	fin = new BufferedInputStream(is);
+	    	outs = new BufferedOutputStream(response.getOutputStream());
+	    	int read = 0;
+   
+	    	while ((read = fin.read(buffer)) != -1) {
+	    		outs.write(buffer, 0, read);
+	    	}
+	    } catch (IOException ex) {
+	    	ex.printStackTrace();
+	    } finally {
+	    	try { outs.close();} catch (Exception ex1){ex1.printStackTrace();};
+	    	try { fin.close();} catch (Exception ex2){ex2.printStackTrace();};
+	    	try { is.close();} catch (Exception ex3){ex3.printStackTrace();};
+	    }		
 	}
 }

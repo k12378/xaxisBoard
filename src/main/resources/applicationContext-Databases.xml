@@ -24,15 +24,20 @@
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
-    </bean>     
+    </bean>
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
-        <property name="configLocation" value="classpath:mybatis-config.xml" />
+        <property name="typeAliasesPackage" value="com.xaxis.bbs" />
+        <property name="mapperLocations" value="classpath:com/xaxis/bbs/mybatis/*.xml" />
     </bean>
-
+    
     <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactory" />
     </bean>
-
+    
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    	<property name="basePackage" value="com.xaxis.bbs.mybatis" />
+    </bean>
+    
 </beans>

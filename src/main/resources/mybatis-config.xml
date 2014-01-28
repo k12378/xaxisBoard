@@ -11,10 +11,10 @@
          <setting name="defaultExecutorType" value="SIMPLE" />
          <setting name="defaultStatementTimeout" value="25000" />
     </settings>
-
-<!--
-    <mappers>
-        <mapper resource="test.xml" />
-    </mappers>
--->
+	
+	<typeAliases>
+		<typeAlias alias="Category" type="com.xaxis.bbs.model.Category" />
+		<typeAlias alias="User" type="com.xaxis.bbs.model.UserInfo" />
+	</typeAliases>
+	
 </configuration>

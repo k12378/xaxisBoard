@@ -6,30 +6,31 @@
 	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
-    
-    <mvc:annotation-driven />
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">    
     
     <context:property-placeholder location="classpath:app-config.properties"/>
        
 	<!-- context scan default package configuration -->
-	<context:component-scan base-package="com.xaxis.bbs" />
+	<context:component-scan base-package="com.xaxis.bbs" />	
 	
- 
+	<mvc:annotation-driven />
+	
+	<!-- BeanName Resolver -->
+	<bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver" p:order="1" />
+	
 	<!-- html / jsp view Resolver -->
-	<bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/jsp/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
-	
-	<!-- Multipart Resolver Setting -->
+	<bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver" 
+		p:prefix="/jsp/" p:suffix=".jsp" p:order="2" p:viewClass="org.springframework.web.servlet.view.JstlView" />
+ 	
+	<!-- Multipart Resolver Setting  --> 
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="${file.upload.max.size}" />
 		<property name="uploadTempDir" ref="uploadDirResource" />
-	</bean>	
+	</bean>
+
 	<bean id="uploadDirResource" class="org.springframework.core.io.FileSystemResource">
 		<constructor-arg value="${file.upload.temp.dir}" />
-	</bean>
+	</bean>	
 	
 	<!-- resources exclusions from servlet mapping -->
     <mvc:resources mapping="/css/**" location="/css/"/>
@@ -38,5 +39,10 @@
     <!-- ExtJS 라이브러리 폴더 및 MVC 리소스 폴더 등록 -->
     <mvc:resources mapping="/extjs/**" location="/extjs/"/>
     <mvc:resources mapping="/app/**" location="/app/"/>
+    
 
+	<!-- Bean 설정 -->
+	<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+	
+		
 </beans>
