@@ -31,6 +31,7 @@ public class AuthenticationUserService implements UserDetailsService{
 		// TODO Auto-generated method stub
 		
 		UserInfo userInfo = this.userService.getUserInfo(username);
+		this.userService.setUser(userInfo);
 		
 		
 		// 권한 체크

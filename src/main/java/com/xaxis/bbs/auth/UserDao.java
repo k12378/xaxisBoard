@@ -2,6 +2,8 @@ package com.xaxis.bbs.auth;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.xaxis.bbs.model.Pagenation;
 import com.xaxis.bbs.model.UserInfo;
 
@@ -13,7 +15,6 @@ public interface UserDao {
 	
 	public UserInfo getUserItem(String userID);
 	
-	public void updateUser(UserInfo user);
+	public Integer checkUserInfo(@Param("userID") String userID, @Param("userPW") String userPW);
 	
-	public void deleteUser(String userID);
 }

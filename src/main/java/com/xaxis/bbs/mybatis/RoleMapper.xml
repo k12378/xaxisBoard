@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xaxis.bbs.board.BoardRole">
+	
+	<select id="getBoardRoleCheck" parameterType="map" resultType="Integer">
+		SELECT
+			count(*) as cnt
+		FROM
+			boardrole
+			INNER JOIN role ON boardrole.roleCode=role.roleCode
+		WHERE
+			boardrole.boardCode=#{boardCode}
+			AND boardrole.groupCode=#{groupCode}
+			AND role.roleName=#{roleName}
+	</select>
+	
+	<insert id="addBoardRole" parameterType="map">
+		INSERT INTO boardrole ( boardCode, groupCode, roleCode ) values ( #{boardCode}, #{groupCode}, #{roleCode} ) 
+	</insert>
+	
+	<delete id="deleteBoardRole" parameterType="String">
+		DELETE FROM boardrole WHERE boardCode=#{boardCode}
+	</delete>
+</mapper>

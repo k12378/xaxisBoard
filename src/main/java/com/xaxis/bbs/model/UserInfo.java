@@ -3,33 +3,24 @@ package com.xaxis.bbs.model;
 import java.util.List;
 
 public class UserInfo {
-	private int sid;
 	private String userID;
 	private String userPassword;
 	private String userName;
+	private String teamName;
 	private List<Group> groups;
-	private List<Role> roles;
 	
 	public UserInfo(){
 		
 	}
 	
-	public UserInfo(int sid, String userID, String userPassword, String userName, List<Group> groups, List<Role> roles)
+	public UserInfo(String userID, String userPassword, String userName, List<Group> groups)
 	{
-		this.sid = sid;
 		this.userID = userID;
 		this.userPassword = userPassword;
 		this.userName = userName;
 		this.groups = groups;
-		this.roles = roles;
 	}
 	
-	public int getSid() {
-		return sid;
-	}
-	public void setSid(int sid) {
-		this.sid = sid;
-	}
 	public String getUserID() {
 		return userID;
 	}
@@ -54,10 +45,13 @@ public class UserInfo {
 	public void setGroups(List<Group> groups) {
 		this.groups = groups;
 	}
-	public List<Role> getRoles() {
-		return roles;
+
+	public String getTeamName() {
+		return teamName;
 	}
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
+
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
 	}
+	
 }

@@ -31,4 +31,5 @@ public interface BaseController {
 	 * @return
 	 */
 	public ModelAndView getList(int currentPage, int paseSize, String searchField, String searchKeyword, String descField, String descCode);
+	
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xaxis.bbs.group.GroupDao">
+	
+	<resultMap id="groupResultMap" type="Group">
+		<id property="groupID" column="groupCode" javaType="java.lang.Integer" />
+		<result property="groupName" column="groupName" javaType="java.lang.String" />
+		<result property="registDate" column="registDate" javaType="java.lang.String" />
+		<result property="register" column="register" javaType="java.lang.String" />
+	</resultMap>
+	
+	<select id="getGroupAllList" resultMap="groupResultMap">
+		SELECT groupCode, groupName, registDate, register FROM groups		
+	</select>
+	
+	<select id="getUserGroupList" parameterType="String"  resultMap="groupResultMap">
+		SELECT
+			groups.groupCode,
+			groups.groupName,
+			groupmember.registDate,
+			groupmember.register
+		FROM
+			groupmember
+			LEFT JOIN groups on groups.groupCode=groupmember.groupCode
+		WHERE
+			groupmember.user=#{userID}
+	</select>
+	
+	<select id="getGroupItem" parameterType="Integer" resultMap="groupResultMap">
+		SELECT groupCode, groupName, registDate, register FROM groups WHERE groupCode=#{groupID}
+	</select>
+	
+	<insert id="addGroupItem" parameterType="Group">
+		INSERT INTO groups ( groupName, registDate, register ) values ( #{groupName}, now(), #{register} )
+	</insert>
+	
+	<update id="updateGroupItem" parameterType="Group">
+		UPDATE FROM groups SET groupName=#{groupName} WHERE groupCode=#{groupID}
+	</update>
+	
+	<delete id="deleteGroupItem" parameterType="Integer">
+		DELETE FROM groups WHERE groupCode=#{groupID}
+	</delete>
+	
+</mapper>

@@ -15,6 +15,17 @@
 		SELECT categoryCode, categoryName FROM category WHERE categoryCode=#{categoryCode}
 	</select>
 	
+	<select id="getBoardCategory" parameterType="String" resultType="Category">
+		SELECT
+			category.categoryCode,
+			category.categoryName
+		FROM
+			board
+			INNER JOIN category ON board.categoryCode = category.categoryCode
+		WHERE
+			board.boardCode=#{boardCode}
+	</select>
+	
 	<update id="updateCategoryItem" parameterType="Category">
 		UPDATE category SET categoryName=#{categoryName} WHERE categoryCode=#{categoryCode}
 	</update>
@@ -22,4 +33,5 @@
 	<delete id="deleteCategoryItem" parameterType="String">
 		DELETE FROM category WHERE categoryCode=#{categoryCode}
 	</delete>
+
 </mapper>

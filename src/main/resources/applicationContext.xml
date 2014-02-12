@@ -16,5 +16,9 @@
 	<bean id="userService" class="com.xaxis.bbs.auth.UserService" />
 	<!-- 카테고리 조회 서비스 -->
 	<bean id="categoryService" class="com.xaxis.bbs.category.CategoryService" />
+	<!-- 그룹 조회 서비스 -->
+	<bean id="groupService" class="com.xaxis.bbs.group.GroupService" />
+	<!-- board 조회 서비스 -->
+	<bean id="boardService" class="com.xaxis.bbs.board.BoardService" />
 	
 </beans>

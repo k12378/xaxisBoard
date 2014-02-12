@@ -16,23 +16,25 @@ public class CategoryService {
 	@Autowired
 	private SqlSession sqlSessionTemplate;
 	
-	public List<Category> getAllCategory(){		
-		CategoryDao categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);		
-		return categoryDao.getCategoryAllList();
+	private CategoryDao categoryDao;
+	
+	public List<Category> getAllCategory(){
+		categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
+		return this.categoryDao.getCategoryAllList();
 	}
 	
 	public Category getCategoryItem(String categoryCode){
-		CategoryDao categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
-		return categoryDao.getCategoryItem(categoryCode);
+		categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
+		return this.categoryDao.getCategoryItem(categoryCode);
 	}
 	
 	public void updateCategoryItem(Category category){
-		CategoryDao categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
-		categoryDao.updateCategoryItem(category);
+		categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
+		this.categoryDao.updateCategoryItem(category);
 	}
 	
 	public void deleteCategoryItem(String categoryCode){
-		CategoryDao categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
-		categoryDao.deleteCategoryItem(categoryCode);
+		categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
+		this.categoryDao.deleteCategoryItem(categoryCode);
 	}
 }

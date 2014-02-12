@@ -32,7 +32,7 @@ public class UserController implements BaseController{
 		
 		Map<String, Object> responseData = new HashMap<String, Object>();
 		
-		if( user.getUserID().equals("rmkdev") ){
+		if( userService.isUser(user.getUserID()) ){
 			responseData.put("result", BaseController.SUCCESS_MESSAGE);
 			responseData.put("resultData", user);
 		}else{

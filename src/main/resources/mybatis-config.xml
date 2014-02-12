@@ -14,7 +14,9 @@
 	
 	<typeAliases>
 		<typeAlias alias="Category" type="com.xaxis.bbs.model.Category" />
-		<typeAlias alias="User" type="com.xaxis.bbs.model.UserInfo" />
+		<typeAlias alias="UserInfo" type="com.xaxis.bbs.model.UserInfo" />
+		<typeAlias alias="Group" type="com.xaxis.bbs.model.Group" />
+		<typeAlias alias="BoardRole" type="com.xaxis.bbs.model.BoardRole" />
 	</typeAliases>
 	
 </configuration>

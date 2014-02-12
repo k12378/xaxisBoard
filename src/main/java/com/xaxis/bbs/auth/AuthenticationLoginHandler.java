@@ -1,6 +1,7 @@
 package com.xaxis.bbs.auth;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +32,7 @@ public class AuthenticationLoginHandler implements AuthenticationSuccessHandler,
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest req,
 			HttpServletResponse res, AuthenticationException auth)
-			throws IOException, ServletException {
+			throws IOException, ServletException{
 		// TODO Auto-generated method stub
 		log.debug("로그인 실패");
 		
@@ -40,7 +41,7 @@ public class AuthenticationLoginHandler implements AuthenticationSuccessHandler,
 		
 		int errorCode = 0;
 		
-		if( !userService.isEqualsPassword(userPw) )
+		if( !userService.isEqualsPassword(userId, userPw) )
 			errorCode = 2;		
 				
 		if( !userService.isUser(userId) )

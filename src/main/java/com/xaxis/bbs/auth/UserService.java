@@ -1,53 +1,82 @@
 package com.xaxis.bbs.auth;
 
-import java.util.ArrayList;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.xaxis.bbs.model.Group;
-import com.xaxis.bbs.model.Role;
+import com.xaxis.bbs.common.util.Base64Coder;
 import com.xaxis.bbs.model.UserInfo;
 
 @Service
+@Transactional
 public class UserService {
 	
+	private Logger log = Logger.getLogger(this.getClass());
+	
+	@Autowired
+	private SqlSession sqlSessionTemplate;
+	
+	private UserDao userDao;
+	
+	private UserInfo user = null;
+		
+	/**
+	 * 유저 정보를 가져옴
+	 * @param userID
+	 * @return
+	 */
 	public UserInfo getUserInfo(String userID){
-		StandardPasswordEncoder encoder = new StandardPasswordEncoder();
-		
-		
-		
-		UserInfo user = new UserInfo();
-		user.setSid(1);
-		user.setUserID(userID);
-		user.setUserName("슈퍼관리자");
-		user.setUserPassword( encoder.encode("zjsqjwjstm") );
-		
-		List<Group> groups = new ArrayList<Group>();
-		groups.add(new Group(1, "GroupName1"));
-		user.setGroups(groups);
-		
-		List<Role> roles = new ArrayList<Role>();
-		roles.add(new Role(1, userID, "/Board"));
-		user.setRoles(roles);
-	
-		return user;
+		userDao = sqlSessionTemplate.getMapper(UserDao.class);
+		return userDao.getUserItem(userID);
 	}
 	
+	/**
+	 * 유저 인지 확인
+	 * @param userID
+	 * @return
+	 */
 	public boolean isUser(String userID){
-		
-		return (userID.equals("rmkdev"))? true: false;
+		userDao = sqlSessionTemplate.getMapper(UserDao.class);
+		UserInfo userInfo = userDao.getUserItem(userID);
+		return (userInfo != null)? true: false;
 	}
 	
-	public boolean isEqualsPassword(String password){
-		StandardPasswordEncoder encoder = new StandardPasswordEncoder();
+	/**
+	 * 패스워드가 같은지 확인
+	 * @param password
+	 * @return
+	 * @throws NoSuchAlgorithmException 
+	 */
+	public boolean isEqualsPassword(String userID, String userPw){
+		log.debug("Param password => " + userPw);
+		userDao = sqlSessionTemplate.getMapper(UserDao.class);
+		Integer cnt = userDao.checkUserInfo(userID, userPw);
 		
-		return encoder.encode("zjsqjwjstm").equals(encoder.encode(password));
+		return (cnt > 0)? true:false;
+	}
+	
+	/**
+	 * 모든 유저 리스트를 가져온다
+	 * @return
+	 */
+	public List<UserInfo> getUserAllList() {
+		userDao = sqlSessionTemplate.getMapper(UserDao.class);
+		return userDao.getUserAllList();
 	}
 
-	public List<UserInfo> getUserAllList() {
-		// TODO Auto-generated method stub
-		return null;
+	public UserInfo getUser() {
+		return user;
 	}
+
+	public void setUser(UserInfo user) {
+		this.user = user;
+	}
+	
+	
 }

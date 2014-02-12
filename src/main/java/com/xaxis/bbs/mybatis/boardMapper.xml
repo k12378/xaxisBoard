@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xaxis.bbs.board.BoardDao">
+		
+	<resultMap id="boardConfigInfoResultMap" type="com.xaxis.bbs.model.BoardConfig">
+		<id property="boardCode" column="boardCode" />
+		<result property="categoryCode" column="categoryCode" />
+		<result property="categoryName" column="categoryName" />
+		<result property="adminFlag" column="adminFlag" />
+		<result property="commentFlag" column="commentFlag" />
+		<result property="attchementFlag" column="attchementFlag" />
+		<result property="recommendanteFlag" column="recommendanteFlag" />
+		<result property="replyFlag" column="replyFlag" />
+		<result property="secretFlag" column="secretFlag" />
+		<result property="registDate" column="registDate" />
+		<result property="register" column="register" />
+	</resultMap>
+	
+	<resultMap id="boardContentListResultMap" type="com.xaxis.bbs.model.Message">
+		<id property="messageId" column="idx" />
+		<result property="subject" column="subject" />
+		<result property="contentsIdx" column="contentsIdx" />
+		<result property="nickName" column="nickname" />
+		<result property="registDate" column="registDate" />
+		<result property="register" column="register" />
+		<result property="recommendanteCount" column="recommendanteCount" />
+		<result property="viewCount" column="viewCount" />
+		<result property="tags" column="tags" />
+		<result property="parentMessageCode" column="parentIdx" />
+		<result property="messageLevel" column="depth" />
+		<result property="displayOrder" column="displayOrder" />
+		<result property="updateDate" column="updateDate" />
+		<result property="updater" column="updater" />
+	</resultMap>
+	
+	<resultMap id="boardContentMessageResultMap" extends="boardContentListResultMap" type="com.xaxis.bbs.model.Message">
+		<association property="message" column="{messageIdx=contentsIdx}" select="com.xaxis.bbs.board.BoardDao.getBoardMessageContent" />
+	</resultMap>
+	
+	<resultMap id="messageContentResultMap" type="com.xaxis.bbs.model.MessageContent">
+		<id property="contentsID" column="contentsID" jdbcType="INTEGER" javaType="int" />
+		<result property="messageContents" column="messageContent" jdbcType="VARCHAR" javaType="String" />
+	</resultMap>
+	
+	<!-- Board Config -->
+	<select id="getBoardConfig" parameterType="map" resultMap="boardConfigInfoResultMap">
+		SELECT
+			board.boardCode,
+			board.categoryCode,
+			category.categoryName,
+			board.adminFlag,
+			board.commentFlag,
+			board.attchementFlag,
+			board.recommendanteFlag,
+			board.replyFlag,
+			board.secretFlag,
+			board.registDate,
+			board.register
+		FROM
+			board
+			INNER JOIN category ON category.categoryCode=board.categoryCode
+		WHERE
+			board.boardCode=#{boardCode}
+	</select>
+	
+	<select id="getBoardConfigList" resultMap="boardConfigInfoResultMap">
+		SELECT
+			board.boardCode,
+			board.categoryCode,
+			category.categoryName,
+			board.adminFlag,
+			board.commentFlag,
+			board.attchementFlag,
+			board.recommendanteFlag,
+			board.replyFlag,
+			board.secretFlag,
+			board.registDate,
+			board.register
+		FROM
+			board
+			INNER JOIN category ON category.categoryCode=board.categoryCode
+	</select>
+	
+	<insert id="insertBoardConfig" parameterType="com.xaxis.bbs.model.BoardConfig">
+		<selectKey order="AFTER" keyProperty="id" resultType="long">
+			SELECT count(boardCode) FROM board WHERE boardCode=#{boardCode}
+		</selectKey>
+		INSERT INTO board 
+			(boardCode, categoryCode, typeCode, adminFlag, commentFlag, attchementFlag, recommendanteFlag, replyFlag, secretFlag, registDate, register )
+		VALUES
+			(#{boardCode}, #{categoryCode}, #{boardTypeCode}, #{adminFlag}, #{commentFlag}, #{attchementFlag}, #{recommendanteFlag}, #{replyFlag}, #{secretFlag}, now(), #{register})
+	</insert>
+	
+	<update id="updateBoardConfig" parameterType="com.xaxis.bbs.model.BoardConfig">
+		UPDATE board SET
+			categoryCode=#{categoryCode},
+			typeCode=#{boardTypeCode},
+			adminFlag=#{adminFlag},
+			commentFlag=#{commentFlag},
+			attchementFlag=#{attchementFlag},
+			recommendanteFlag=#{recommendanteFlag},
+			replyFlag=#{replyFlag},
+			secretFlag=#{secretFlag},
+			updateDate=now(),
+			updater=#{updater}
+		WHERE 
+			boardCode=#{boardCode}
+	</update>
+	
+	<update id="deleteBoardConfig" parameterType="String">
+		UPDATE board SET deleteFlag=1 WHERE boardCode=#{boardCode}
+	</update>
+	
+	<!-- Message content -->	
+	<select id="getBoardMessageList" parameterType="String" resultMap="boardContentListResultMap">
+		SELECT
+			idx,
+			subject,
+			contentsIdx,
+			secretCode,
+			tags,
+			viewCount,
+			recommendanteCount,
+			nickname,
+			parentIdx,
+			depth,
+			displayOrder,
+			registDate,
+			register,
+			updateDate,
+			updater		
+		FROM
+			message
+		WHERE
+			deleteFlag=0
+			AND boardCode=#{boardCode}		
+	</select>	
+	
+	<select id="getBoardMessage" parameterType="map" resultMap="boardContentMessageResultMap">
+		SELECT
+			idx,
+			subject,
+			contentsIdx,
+			secretCode,
+			tags,
+			viewCount,
+			recommendanteCount,
+			nickname,
+			parentIdx,
+			depth,
+			displayOrder,
+			registDate,
+			register,
+			updateDate,
+			updater		
+		FROM
+			message
+		WHERE
+			deleteFlag=0
+			AND idx=#{messageCode}
+	</select>
+	
+	<select id="getBoardMessageContent" parameterType="map" resultType="com.xaxis.bbs.model.MessageContent">
+		SELECT
+			contentsIdx as contentsID,
+			ifnull( CONVERT(messageContents USING utf8) , '' ) as messageContent
+		FROM
+			messageContents
+		WHERE
+			contentsIdx=#{messageIdx}
+	</select>
+	
+	<insert id="insertMessageContent" parameterType="byte[]">
+		INSERT INTO messageContents ( messageContents ) VALUES (#{bytesMessage, typeHandler=org.apache.ibatis.type.ByteArrayTypeHandler})
+		<selectKey order="AFTER" keyProperty="contentsIdx" resultType="long">
+			SELECT last_insert_id()
+		</selectKey>
+	</insert>
+	
+	
+	
+	
+	
+	
+</mapper>

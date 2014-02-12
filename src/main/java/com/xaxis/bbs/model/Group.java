@@ -4,6 +4,18 @@ public class Group{
 	
 	private int groupID;
 	private String groupName;
+	private String registDate;
+	private String register;
+	
+	public Group(){
+		
+	}
+	
+	public Group(int groupID, String groupName, String register){
+		this.groupID = groupID;
+		this.groupName = groupName;
+		this.register = register;
+	}
 	
 	public int getGroupID() {
 		return groupID;
@@ -22,5 +34,16 @@ public class Group{
 		this.groupID = groupID;
 		this.groupName = groupName;
 	}
-	
+	public String getRegistDate() {
+		return registDate;
+	}
+	public void setRegistDate(String registDate) {
+		this.registDate = registDate;
+	}
+	public String getRegister() {
+		return register;
+	}
+	public void setRegister(String register) {
+		this.register = register;
+	}	
 }

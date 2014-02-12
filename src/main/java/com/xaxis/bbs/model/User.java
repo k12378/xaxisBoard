@@ -15,12 +15,11 @@ public class User extends UserInfo implements UserDetails {
 	
 	public User(UserInfo user){
 		if( user != null ){
-			this.setSid(user.getSid());
 			this.setUserID(user.getUserID());
 			this.setUserName(user.getUserName());
 			this.setUserPassword(user.getUserPassword());
+			this.setTeamName(user.getTeamName());
 			this.setGroups(user.getGroups());
-			this.setRoles(user.getRoles());
 		}
 	}
 	
