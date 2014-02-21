@@ -10,13 +10,15 @@ public interface CategoryDao {
 	
 	public List<Category> getCategoryAllList();
 	
-	public Category getCategoryItem(@Param("categoryCode") String categoryCode);
+	public Category getCategoryItem(@Param("categoryCode") int categoryCode);
 	
 	public Category getBoardCategory(@Param("boardCode") String boardCode);
 	
+	public List<Category> getCategoryDepthItems(@Param("categoryCode") int categoryCode, @Param("depth") int depth ); 
+		
 	public void updateCategoryItem(Category category);
 	
-	public void deleteCategoryItem(@Param("categoryCode") String categoryCode);
+	public void deleteCategoryItem(@Param("categoryCode") int categoryCode);
 	
-	public void addCategoryItem(Category category);
+	public int addCategoryItem(Category category);
 }

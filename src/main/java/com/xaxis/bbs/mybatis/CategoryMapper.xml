@@ -5,20 +5,51 @@
 	<resultMap id="categoryResultMap" type="Category">
 		<id property="categoryCode" column="categoryCode" />
 		<result property="categoryName" column="categoryName" />
+		<result property="parentCode" column="parentCode" />
+		<result property="depth" column="depth" />
+		<result property="displayOrder" column="displayOrder" />
 	</resultMap>
 	
-	<select id="getCategoryAllList" resultMap="categoryResultMap">
-		SELECT categoryCode, categoryName FROM category WHERE deleteFlag=0
+	<select id="getCategoryAllList" resultMap="categoryResultMap">		
+		SELECT 
+			categoryCode, 
+			categoryName, 
+			parentCode, 
+			depth, 
+			displayOrder 
+		FROM 
+			category
+		WHERE 
+			deleteFlag=0 
+		ORDER BY parentCode, depth, displayOrder ASC
+	</select>
+	
+	<select id="getCategoryDepthItems" parameterType="map" resultMap="categoryResultMap">
+		SELECT
+			categoryCode, 
+			categoryName, 
+			parentCode, 
+			depth, 
+			displayOrder
+		FROM
+			category
+		WHERE
+			deleteFlag=0
+			AND depth=#{depth}
+			AND categoryCode=#{categoryCode}
 	</select>
 	
 	<select id="getCategoryItem" parameterType="String" resultType="Category">
-		SELECT categoryCode, categoryName FROM category WHERE categoryCode=#{categoryCode}
+		SELECT categoryCode, categoryName, parentCode, depth, displayOrder FROM category WHERE categoryCode=#{categoryCode}
 	</select>
 	
 	<select id="getBoardCategory" parameterType="String" resultType="Category">
 		SELECT
 			category.categoryCode,
-			category.categoryName
+			category.categoryName,
+			categoty.parentCode,
+			category.depth,
+			category.displayOrder
 		FROM
 			board
 			INNER JOIN category ON board.categoryCode = category.categoryCode
@@ -33,5 +64,12 @@
 	<delete id="deleteCategoryItem" parameterType="String">
 		DELETE FROM category WHERE categoryCode=#{categoryCode}
 	</delete>
+	
+	<insert id="addCategoryItem" parameterType="Category" useGeneratedKeys="true" keyProperty="categoryCode" keyColumn="categoryCode">
+		INSERT INTO category (categoryCode, categoryName, parentCode, depth, displayOrder ) VALUES (NULL, #{categoryName}, #{parentCode}, #{depth}, #{displayOrder} )
+		<selectKey order="AFTER" keyProperty="id" resultType="int">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
 
 </mapper>

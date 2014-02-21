@@ -19,6 +19,7 @@
 	<resultMap id="boardContentListResultMap" type="com.xaxis.bbs.model.Message">
 		<id property="messageId" column="idx" />
 		<result property="subject" column="subject" />
+		<result property="boardCode" column="boardCode" />
 		<result property="contentsIdx" column="contentsIdx" />
 		<result property="nickName" column="nickname" />
 		<result property="registDate" column="registDate" />
@@ -38,8 +39,8 @@
 	</resultMap>
 	
 	<resultMap id="messageContentResultMap" type="com.xaxis.bbs.model.MessageContent">
-		<id property="contentsID" column="contentsID" jdbcType="INTEGER" javaType="int" />
-		<result property="messageContents" column="messageContent" jdbcType="VARCHAR" javaType="String" />
+		<id property="contentsID" column="contentsID" />
+		<result property="bytesMessage" column="messageContent" jdbcType="BLOB" javaType="byte[]" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler" />
 	</resultMap>
 	
 	<!-- Board Config -->
@@ -82,13 +83,13 @@
 	</select>
 	
 	<insert id="insertBoardConfig" parameterType="com.xaxis.bbs.model.BoardConfig">
-		<selectKey order="AFTER" keyProperty="id" resultType="long">
-			SELECT count(boardCode) FROM board WHERE boardCode=#{boardCode}
-		</selectKey>
 		INSERT INTO board 
 			(boardCode, categoryCode, typeCode, adminFlag, commentFlag, attchementFlag, recommendanteFlag, replyFlag, secretFlag, registDate, register )
 		VALUES
 			(#{boardCode}, #{categoryCode}, #{boardTypeCode}, #{adminFlag}, #{commentFlag}, #{attchementFlag}, #{recommendanteFlag}, #{replyFlag}, #{secretFlag}, now(), #{register})
+		<selectKey order="AFTER" keyProperty="id" resultType="long">
+			SELECT count(boardCode) FROM board WHERE boardCode=#{boardCode}
+		</selectKey>
 	</insert>
 	
 	<update id="updateBoardConfig" parameterType="com.xaxis.bbs.model.BoardConfig">
@@ -116,6 +117,7 @@
 		SELECT
 			idx,
 			subject,
+			boardCode,
 			contentsIdx,
 			secretCode,
 			tags,
@@ -140,6 +142,7 @@
 		SELECT
 			idx,
 			subject,
+			boardCode,
 			contentsIdx,
 			secretCode,
 			tags,
@@ -160,26 +163,62 @@
 			AND idx=#{messageCode}
 	</select>
 	
-	<select id="getBoardMessageContent" parameterType="map" resultType="com.xaxis.bbs.model.MessageContent">
+	<select id="isEqualsSecretCode" parameterType="map" resultType="int">
+		SELECT count(*) FROM message WHERE idx=#{messageCode} AND secretCode=MD5(#{secretCode})
+	</select>
+	
+	<select id="isMessageEqualsWriter" parameterType="map" resultType="int">
+		SELECT count(*) FROM message WHERE idx=#{messageCode} AND register=#{userId}
+	</select>
+	
+	<insert id="insertMessage" parameterType="com.xaxis.bbs.model.Message" useGeneratedKeys="true" keyProperty="messageId" keyColumn="idx" >
+		INSERT INTO message
+			( idx, subject, contentsIdx, boardCode, secretCode, recommendanteCount, viewCount, tags, topFlag, parentIdx, depth, displayOrder, nickName, registDate, register, deleteFlag )
+		VALUES
+			(NULL, #{subject}, #{contentsIdx}, #{boardCode}, MD5(#{secretCode}), 0, 0, #{tags}, #{topFlag}, #{parentMessageCode}, #{messageLevel}, #{displayOrder}, #{nickName}, now(), #{register}, 0)
+		<selectKey order="AFTER" keyProperty="messageId" resultType="int">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<update id="updateMessage" parameterType="com.xaxis.bbs.model.Message">
+		UPDATE message SET 
+			subject=#{subject},
+			boardCode=#{boardCode},
+			tags=#{tags},
+			topFlag=#{topFlag},
+			updateDate=now(),
+			updater=#{updater}
+		WHERE
+			idx=#{messageId}
+	</update>
+	
+	<update id="deleteMessage" parameterType="map">		
+		UPDATE message SET deleteFlag=1 WHERE idx=#{messageId}
+	</update>
+	
+	<select id="getBoardMessageContent" parameterType="map" resultMap="messageContentResultMap">
 		SELECT
 			contentsIdx as contentsID,
-			ifnull( CONVERT(messageContents USING utf8) , '' ) as messageContent
+			messageContents as messageContent
 		FROM
 			messageContents
 		WHERE
 			contentsIdx=#{messageIdx}
 	</select>
 	
-	<insert id="insertMessageContent" parameterType="byte[]">
-		INSERT INTO messageContents ( messageContents ) VALUES (#{bytesMessage, typeHandler=org.apache.ibatis.type.ByteArrayTypeHandler})
-		<selectKey order="AFTER" keyProperty="contentsIdx" resultType="long">
-			SELECT last_insert_id()
+	<insert id="insertMessageContent" parameterType="com.xaxis.bbs.model.MessageContent" useGeneratedKeys="true" keyProperty="contentsID" keyColumn="contentsIdx" >		
+		INSERT INTO messageContents
+			( contentsIdx, messageContents )
+		VALUES 
+			(NULL, #{bytesMessage, jdbcType=BLOB})
+		<selectKey order="AFTER" keyProperty="contentsID" resultType="int">
+		SELECT LAST_INSERT_ID()
 		</selectKey>
 	</insert>
 	
-	
-	
-	
-	
+	<update id="updateMessageContent" parameterType="com.xaxis.bbs.model.MessageContent">
+		UPDATE messagecontents SET messageContents=#{bytesMessage, jdbcType=BLOB} WHERE contentsIdx=#{contentsID}
+	</update>
 	
 </mapper>

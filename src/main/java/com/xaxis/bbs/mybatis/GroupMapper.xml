@@ -9,6 +9,17 @@
 		<result property="register" column="register" javaType="java.lang.String" />
 	</resultMap>
 	
+	<select id="checkUserAdmin" parameterType="map" resultType="int">
+		SELECT 
+			count(*)
+		FROM
+			groupmember
+			INNER JOIN groups ON groupmember.groupCode = groups.groupcode
+		WHERE
+			groupmember.user=#{memberId}
+			AND groups.groupName=#{groupName}
+	</select>
+	
 	<select id="getGroupAllList" resultMap="groupResultMap">
 		SELECT groupCode, groupName, registDate, register FROM groups		
 	</select>

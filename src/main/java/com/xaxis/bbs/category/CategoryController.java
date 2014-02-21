@@ -2,6 +2,7 @@ package com.xaxis.bbs.category;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +44,91 @@ public class CategoryController implements BaseController{
 			log.debug("\n CategoryCode => "+ category.getCategoryCode() + " \n categoryName => "+ category.getCategoryName() );
 		}
 		
-		responseData.put("result", BaseController.SUCCESS_MESSAGE);
-		responseData.put("resultData", categoryList);
+		responseData.put("success", BaseController.SUCCESS_MESSAGE);
+		responseData.put("data", categoryList);
 		
-		return new ModelAndView("jsonView", "responseData", responseData);
+		return new ModelAndView("jsonView", responseData);
+	}
+	
+	/**
+	 * 카테고리 모든 리스트
+	 * URL => /category/list/
+	 */
+	@RequestMapping(value="list/tree/", method=RequestMethod.GET)
+	public ModelAndView getTreeListAll() {
+		// TODO Auto-generated method stub
+		Map<String, Object> responseData = new HashMap<String, Object>();
+		
+		List<Category> categoryList = categoryService.getAllCategory();
+		
+		for( Category category : categoryList ){			
+			Map<String, Object> templateObject = new HashMap<String, Object>();	
+			templateObject.put("id", category.getCategoryCode());
+			templateObject.put("text", category.getCategoryName());			
+			templateObject.put("parentCode", category.getParentCode());
+			templateObject.put("depth", category.getDepth());
+			templateObject.put("displayOrder", category.getDisplayOrder());
+			templateObject.put("expend", true);	
+		}
+
+		
+
+		int beforeParentCode = 0;
+		int beforeDepth = 0;		
+		int index = 0;
+		
+		ArrayList<Map<String, Object>> treeObj = new ArrayList<Map<String, Object>>();
+		ArrayList<Map<String, Object>> treeChaildrenObj = new ArrayList<Map<String, Object>>();
+		
+		Map<String, Object> templateObject;	
+				
+		for( Category category: categoryList){
+			
+			templateObject = new HashMap<String, Object>();
+			templateObject.put("id", category.getCategoryCode());
+			templateObject.put("text", category.getCategoryName());			
+			templateObject.put("parentCode", category.getParentCode());
+			templateObject.put("depth", category.getDepth());
+			templateObject.put("displayOrder", category.getDisplayOrder());	
+			
+			if( category.getDepth() == 0  ){
+				treeObj.add(templateObject);
+			}else{
+				treeChaildrenObj.add(templateObject);
+			}
+		}
+		
+		ArrayList<Map<String, Object>> treeJsonObj = new ArrayList<Map<String, Object>>();
+		
+		ArrayList<Map<String, Object>> treeChildJsonObj = null;
+		
+		Map<String, Object> rootJson = new HashMap<String, Object>();
+			
+		
+		for( Map<String, Object> obj1 : treeObj){			
+			treeChildJsonObj = new ArrayList<Map<String, Object>>();			
+			for( Map<String, Object> obj2 : treeChaildrenObj){
+				if( obj1.get("parentCode").equals(obj2.get("parentCode"))){
+					obj2.put("leaf", true);
+					treeChildJsonObj.add(obj2);
+				}				
+			}			
+			if( treeChildJsonObj.size() > 0 ){
+				obj1.put("expended", true);
+				obj1.put("children", treeChildJsonObj);
+			}else{
+				obj1.put("leaf", true);
+			}
+			treeJsonObj.add(obj1);
+		}
+		rootJson.put("text", "root");
+		rootJson.put("expended", true);
+		rootJson.put("children", treeJsonObj);
+		
+		//responseData.put("success", BaseController.SUCCESS_MESSAGE);
+		responseData.putAll(rootJson);
+		
+		return new ModelAndView("jsonView", responseData);
 	}
 	
 	/**
@@ -56,15 +138,15 @@ public class CategoryController implements BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="item/{categoryCode}/", method=RequestMethod.GET)
-	public ModelAndView getItem(@PathVariable("categoryCode") String categoryCode) {
+	public ModelAndView getItem(@PathVariable("categoryCode") int categoryCode) {
 		// TODO Auto-generated method stub
 		Map<String, Object> responseData = new HashMap<String, Object>();
 		Category categoryItem = categoryService.getCategoryItem(categoryCode);
 		
-		responseData.put("result", BaseController.SUCCESS_MESSAGE);
-		responseData.put("resultData", categoryItem);
+		responseData.put("success", BaseController.SUCCESS_MESSAGE);
+		responseData.put("data", categoryItem);
 		
-		return new ModelAndView("jsonView", "responseData", responseData);
+		return new ModelAndView("jsonView", responseData);
 	}
 	
 	/**
@@ -77,14 +159,14 @@ public class CategoryController implements BaseController{
 	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value="item/update/{categoryCode}/", method=RequestMethod.POST)
-	public ModelAndView updateItem(@PathVariable("categoryCode") String categoryCode,
+	public ModelAndView updateItem(@PathVariable("categoryCode") int categoryCode,
 			@RequestParam(value="categoryName", required=true) String categoryName) throws UnsupportedEncodingException{
 		Map<String, Object> responseData = new HashMap<String, Object>();
 		String resultMessage = "";
 		
 		Category categoryItem = categoryService.getCategoryItem(categoryCode);
 		
-		if( !categoryItem.equals(null) && !categoryItem.getCategoryCode().isEmpty() ){
+		if( !categoryItem.equals(null) ){
 			Category category = new Category(categoryCode, URLDecoder.decode(categoryName, "UTF-8"));
 			categoryService.updateCategoryItem(category);
 			resultMessage = BaseController.SUCCESS_MESSAGE;
@@ -92,9 +174,9 @@ public class CategoryController implements BaseController{
 			resultMessage = BaseController.FAILED_MESSAGE;
 		}
 		
-		responseData.put("result", resultMessage);
+		responseData.put("success", resultMessage);
 		
-		return new ModelAndView("jsonView", "responseData", responseData);
+		return new ModelAndView("jsonView", responseData);
 	}
 	
 	/**
@@ -104,22 +186,22 @@ public class CategoryController implements BaseController{
 	 * @return
 	 */
 	@RequestMapping(value="item/delete/{categoryCode}/", method=RequestMethod.GET)
-	public ModelAndView deleteItem(@PathVariable("categoryCode") String categoryCode){
+	public ModelAndView deleteItem(@PathVariable("categoryCode") int categoryCode){
 		Map<String, Object> responseData = new HashMap<String, Object>();
 		String resultMessage = "";
 		
 		Category categoryItem = categoryService.getCategoryItem(categoryCode);
 		
-		if( !categoryItem.equals(null) && !categoryItem.getCategoryCode().isEmpty() ){
+		if( !categoryItem.equals(null) ){
 			categoryService.deleteCategoryItem(categoryCode);
 			resultMessage = BaseController.SUCCESS_MESSAGE;
 		}else{
 			resultMessage = BaseController.FAILED_MESSAGE;
 		}
 		
-		responseData.put("result", resultMessage);
+		responseData.put("success", resultMessage);
 		
-		return new ModelAndView("jsonView", "responseData", responseData);
+		return new ModelAndView("jsonView", responseData);
 	}
 
 	@Override

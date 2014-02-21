@@ -1,0 +1,23 @@
+{
+	"menus" : [
+		{
+			"name" : "Category",
+			"url" : "/category/list/",
+			"items" : [
+			]
+		},
+		{
+			"name" : "Group",
+			"url" : "/group/list/",
+			"items" : [
+			]
+		},
+		{
+			"name" : "BoardConfig",
+			"url" : "/board/list/",
+			"items" : [
+			]
+		}
+	]
+
+}

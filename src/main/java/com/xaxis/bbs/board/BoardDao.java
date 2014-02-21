@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.xaxis.bbs.model.BoardConfig;
 import com.xaxis.bbs.model.Message;
+import com.xaxis.bbs.model.MessageContent;
 
 public interface BoardDao {
 	
@@ -57,5 +58,21 @@ public interface BoardDao {
 	public List<Message> getBoardMessageList(@Param("boardCode") String boardCode);
 	
 	
-	public long insertMessageContent(@Param("bytesMessage") byte[] bytesMessage);
+	
+	
+	public int insertMessage(Message message);
+	
+	public void updateMessage(Message message);
+	
+	public void deleteMessage(@Param("messageId") int messageId);
+	
+	public int isEqualsSecretCode(@Param("messageCode") int messageCode, @Param("secretCode") String secretCode);
+	
+	public int isMessageEqualsWriter(@Param("messageCode") int messageCode, @Param("userId") String userId);
+	
+	public int insertMessageContent(MessageContent messageContent);
+	
+	public void updateMessageContent(MessageContent messageContent);
+	
+	
 }

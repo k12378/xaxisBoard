@@ -2,6 +2,8 @@ package com.xaxis.bbs.group;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.xaxis.bbs.model.Group;
 
 public interface GroupDao {
@@ -43,4 +45,6 @@ public interface GroupDao {
 	 * @param group
 	 */
 	public void addGroupItem(Group group);
+	
+	public int checkUserAdmin(@Param("memberId") String memberId, @Param("groupName") String groupName);
 }

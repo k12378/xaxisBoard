@@ -23,9 +23,14 @@ public class CategoryService {
 		return this.categoryDao.getCategoryAllList();
 	}
 	
-	public Category getCategoryItem(String categoryCode){
+	public Category getCategoryItem(int categoryCode){
 		categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
 		return this.categoryDao.getCategoryItem(categoryCode);
+	}
+	
+	public List<Category> getCategoryDepthItems(int categoryCode, int depth){
+		categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
+		return this.categoryDao.getCategoryDepthItems(categoryCode, depth);
 	}
 	
 	public void updateCategoryItem(Category category){
@@ -33,7 +38,7 @@ public class CategoryService {
 		this.categoryDao.updateCategoryItem(category);
 	}
 	
-	public void deleteCategoryItem(String categoryCode){
+	public void deleteCategoryItem(int categoryCode){
 		categoryDao = sqlSessionTemplate.getMapper(CategoryDao.class);
 		this.categoryDao.deleteCategoryItem(categoryCode);
 	}

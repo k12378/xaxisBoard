@@ -1,0 +1,25 @@
+{
+	"menus" : [
+		{
+			"name" : "Category",
+			"url" : "http://www.naver.com",
+			"description" : "카테고리 설정 서비스",
+			"width" : 100,
+			"height" : 30
+		},
+		{
+			"name" : "Group",
+			"url" : "http://www.daum.net",
+			"description" : "그룹 정보 설정 서비스",
+			"width" : 100,
+			"height" : 30
+		},
+		{
+			"name" : "BoardConfig",
+			"url" : "http://www.nate.com",
+			"description" : "보드 설정 정보 서비스",
+			"width" : 120,
+			"height" : 30		
+		}		
+	]
+}

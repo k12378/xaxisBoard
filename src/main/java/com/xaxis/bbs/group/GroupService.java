@@ -20,16 +20,21 @@ public class GroupService {
 	
 	public List<Group> getGroupAllList(){
 		groupDao = sqlSessionTemplate.getMapper(GroupDao.class);
-		return this.groupDao.getGroupAllList();		
+		return groupDao.getGroupAllList();		
 	}
 	
 	public Group getGroupItem(int groupID){
 		groupDao = sqlSessionTemplate.getMapper(GroupDao.class);
-		return this.groupDao.getGroupItem(groupID);
+		return groupDao.getGroupItem(groupID);
 	}
 	
 	public void updateGroupItem(Group group){
 		groupDao = sqlSessionTemplate.getMapper(GroupDao.class);
-		this.groupDao.updateGroupItem(group);
+		groupDao.updateGroupItem(group);
+	}
+	
+	public boolean checkUserAdmin(String memberId, String groupName){
+		groupDao = sqlSessionTemplate.getMapper(GroupDao.class);
+		return ( groupDao.checkUserAdmin(memberId, groupName) > 0 )? true : false;
 	}
 }

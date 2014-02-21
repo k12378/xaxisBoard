@@ -1,12 +1,12 @@
 package com.xaxis.bbs.common.util.test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.springframework.security.crypto.codec.Base64;
+
+import com.xaxis.bbs.common.util.Base64Coder;
 
 
 
@@ -48,6 +48,7 @@ public class TemplateTests {
 		//log.debug( "Result => " + sUtil.numberToDivisionComma(100000000) );
 	}
 */
+/*	
 	@Test
 	public void dbChaeck(){
 		Connection conn = null;
@@ -60,22 +61,63 @@ public class TemplateTests {
 			String password = "roqkf!@#";
 			conn = DriverManager.getConnection(url, userid, password);
 			
-			String query = "SELECT contentsIdx as contentsID, ifnull( CONVERT(messageContents USING utf8) , '' ) as messageContent FROM messageContents WHERE contentsIdx=2";
+			String query = "SELECT contentsIdx as contentsID, messageContents as messageContent FROM messageContents WHERE contentsIdx=5";
 			st = conn.createStatement();			
 			rs = st.executeQuery(query);
 			
+			InputStream messageByteContents = null;
+			int contentsId = 0;
+			byte[] cutByte = new byte[256];
 			while( rs.next() ){
-				log.debug( rs.getInt("contentsID") );
-				log.debug( rs.getString("messageContent") );
+				contentsId = rs.getInt("contentsID");
+				messageByteContents = rs.getBlob("messageContent").getBinaryStream();
 			}
 			
-		}catch( Exception e ){
+			StringBuffer out = new StringBuffer();
+			for(int i; (i=messageByteContents.read(cutByte)) != -1; ){
+				out.append(new String(cutByte, 0, i));
+			}
 			
+			log.debug("contents => "+out.toString());
+			
+			
+			
+			
+		}catch( Exception e ){
+			e.printStackTrace();
 		}finally{
 			if( rs != null ){ try{ rs.close(); }catch(Exception e){e.printStackTrace();}};
 			if( st != null ){ try{ st.close(); }catch(Exception e){e.printStackTrace();}};
 			if( conn != null ){ try{ conn.close(); }catch(Exception e){e.printStackTrace();}};
 		}
 		
+	}
+*/	
+	
+	@Test
+	public void base64DecodeTest() throws UnsupportedEncodingException{
+		String encodeKey = "cbn2bjJ2VTEq2rl3";
+		
+		//byte[] base64DecodeByte = Base64Coder.decode(base64EncodeKey);
+		byte[] encodeByteKey = encodeKey.getBytes("KSC5601");
+		log.debug( Base64.isBase64(encodeByteKey) );
+		if( Base64.isBase64(encodeByteKey) ){
+			byte[] decodeByte =  Base64.decode(encodeByteKey);
+			log.debug("decode Text => "+ new String(decodeByte));
+		}
+		
+		String decodeKey = "2792374";
+		
+		String encodeByteKey1 = Base64Coder.encodeString(decodeKey);
+		
+		log.debug(encodeByteKey1);
+		
+		
+		
+		
+		
+		
+		//log.debug("decode Text =>"+ new String(base64DecodeByte, 0, base64DecodeByte.length));
+		//log.debug("decode Text =>"+  new String(base64DecodeByte));
 	}
 }

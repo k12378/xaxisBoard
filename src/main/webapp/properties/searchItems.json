@@ -1,0 +1,28 @@
+{
+	"Category" : [
+		{
+			"display" : "카테고리명",
+			"value" : ""
+		},
+		{
+			"display" : "카테고리명2",
+			"value" : ""
+		},
+		{
+			"display" : "카테고리명3",
+			"value" : ""
+		}
+	],
+	"Group" : [
+		{
+			"display" : "그룹명",
+			"value" : ""
+		}
+	],
+	"BoardConfig" : [
+		{
+			"display" : "게시판명",
+			"value" : ""
+		}
+	]
+}

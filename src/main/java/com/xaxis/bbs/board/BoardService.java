@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.xaxis.bbs.model.BoardConfig;
 import com.xaxis.bbs.model.Message;
+import com.xaxis.bbs.model.MessageContent;
 
 @Service
 @Transactional
@@ -87,9 +88,41 @@ public class BoardService {
 		return boardDao.getBoardMessage(messageCode);
 	}
 	
-	public long insertMessageContent(@Param("bytesMessage") byte[] bytesMessage){
+	public int insertMessage(Message message){
 		boardDao = sqlSessionTemplate.getMapper(BoardDao.class);
-		return boardDao.insertMessageContent(bytesMessage);
+		boardDao.insertMessage(message);
+		return message.getMessageId();
+	}
+	
+	public void updateMessage(Message message){
+		boardDao = sqlSessionTemplate.getMapper(BoardDao.class);
+		boardDao.updateMessage(message);
+	}
+	
+	public void deleteMessageId(int messageId){
+		boardDao = sqlSessionTemplate.getMapper(BoardDao.class);
+		boardDao.deleteMessage(messageId);
+	}
+	
+	public int isEqualsSecretCode(int messageCode, String secretCode){
+		boardDao = sqlSessionTemplate.getMapper(BoardDao.class);
+		return boardDao.isEqualsSecretCode(messageCode, secretCode);
+	}
+	
+	public boolean isMessageEqualsWriter(int messageCode, String userId){
+		boardDao = sqlSessionTemplate.getMapper(BoardDao.class);		
+		return (boardDao.isMessageEqualsWriter(messageCode, userId) > 0 )? true : false;
+	}
+	
+	public int insertMessageContent(MessageContent messageContent){
+		boardDao = sqlSessionTemplate.getMapper(BoardDao.class);
+		boardDao.insertMessageContent(messageContent);
+		return messageContent.getContentsID();
+	}
+	
+	public void updateMessageContent(MessageContent messageContent){
+		boardDao = sqlSessionTemplate.getMapper(BoardDao.class);
+		boardDao.updateMessageContent(messageContent);
 	}
 	
 }

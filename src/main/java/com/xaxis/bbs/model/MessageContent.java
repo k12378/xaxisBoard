@@ -5,7 +5,7 @@ public class MessageContent {
 	private int contentsID;	
 	private byte[] bytesMessage;
 	private String messageContents;
-	
+/*	
 	public MessageContent(int contentsID, byte[] bytesMessage){
 		this.contentsID = contentsID;
 		this.messageContents = bytesMessage.toString();
@@ -15,7 +15,7 @@ public class MessageContent {
 	public MessageContent(){
 		
 	}
-	
+*/	
 	public int getContentsID() {
 		return contentsID;
 	}

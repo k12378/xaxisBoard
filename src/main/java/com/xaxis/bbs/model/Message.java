@@ -3,7 +3,9 @@ package com.xaxis.bbs.model;
 public class Message {
 	
 	private int messageId;					// 글번호
+	private String boardCode;				// BoardCode
 	private String subject;					// 제목
+	
 	
 	private int contentsIdx;
 	private MessageContent message;			// 글 내용
@@ -34,6 +36,13 @@ public class Message {
 	}
 	public void setMessageId(int messageId) {
 		this.messageId = messageId;
+	}
+	
+	public String getBoardCode() {
+		return boardCode;
+	}
+	public void setBoardCode(String boardCode) {
+		this.boardCode = boardCode;
 	}
 	public String getSubject() {
 		return subject;

@@ -38,7 +38,10 @@
     <mvc:resources mapping="/js/**" location="/js/"/>
     <!-- ExtJS 라이브러리 폴더 및 MVC 리소스 폴더 등록 -->
     <mvc:resources mapping="/extjs/**" location="/extjs/"/>
-    <mvc:resources mapping="/app/**" location="/app/"/>
+    <!-- <mvc:resources mapping="/app/**" location="/app/"/> -->
+    <mvc:resources mapping="/admin/**" location="/admin/" />
+    <mvc:resources mapping="/properties/**" location="/properties/" />
+    
     
 
 	<!-- Bean 설정 -->
